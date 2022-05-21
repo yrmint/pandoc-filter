@@ -1,9 +1,9 @@
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
 
 public class Leaderboard {
     File file;
+    Map<String, Integer> sortedLeaderboard;
 
     public Leaderboard(String player, Integer score) {
         file = new File("src\\main\\leaderboard.txt");
@@ -11,7 +11,6 @@ public class Leaderboard {
         Map<String, Integer> leaderboard = new HashMap<>();
         try {
             FileReader fr = new FileReader(file);
-            FileWriter writer = new FileWriter(file);
             BufferedReader reader = new BufferedReader(fr);
             String line = reader.readLine();
             while (line != null) {
@@ -19,39 +18,33 @@ public class Leaderboard {
                 line = reader.readLine();
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
         for (String l: lines) {
-            String i = l.split(" ")[2];
-            leaderboard.put(l.split(" ")[1], Integer.parseInt(l.split(" ")[2]));
+            leaderboard.put(l.split(" ")[0], Integer.parseInt(l.split(" ")[1]));
         }
 
-        if (leaderboard.containsKey(player) && leaderboard.get(player) < score)
+        if (!leaderboard.containsKey(player) || leaderboard.get(player) < score) {
+            lines.removeIf(l -> l.startsWith(player + " "));
             leaderboard.put(player, score);
+            lines.add(player + " " + score);
+        }
+
 
         Map<String, Integer> temp = sortByValue(leaderboard);
-        Map<String, Integer> sortedLeaderboard = invertMap(temp);
+        sortedLeaderboard = invertMap(temp);
 
         try {
-            new FileWriter(file, false).close();
             FileWriter writer = new FileWriter(file);
-            Iterator it = sortedLeaderboard.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry)it.next();
-                writer.write(pair.getKey() + " " + pair.getValue() + "\n");
+            for (String l : lines) {
+                writer.write(l + "\n");
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-
     }
 
     private static Map<String, Integer> sortByValue(Map<String, Integer> unsortedMap) {
@@ -86,5 +79,16 @@ public class Leaderboard {
             if (i <= 5) invertedMap.put(entry.getKey(), entry.getValue());
         }
         return invertedMap;
+    }
+
+    public Map<String, Integer> returnLeaderboard() {
+        return sortedLeaderboard;
+    }
+
+    public static <K, V> void printMap(Map<K, V> map) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            System.out.println("Key : " + entry.getKey()
+                    + " Value : " + entry.getValue());
+        }
     }
 }

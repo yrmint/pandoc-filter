@@ -80,7 +80,7 @@ public class GameWindow extends JFrame {
             super.paintComponent(gr);
             gr.drawImage(background, 0, 0, null);
             gr.drawImage(character, x, 400, null);
-            gr.setFont(new Font("", Font.BOLD, 20));
+            gr.setFont(new Font("Times New Roman", Font.PLAIN, 20));
             gr.drawString("Score: " + score, 0, 580);
             if (lives == 3) gr.drawImage(lives3, 0, 0, null);
             if (lives == 2) gr.drawImage(lives2,0, 0, null);

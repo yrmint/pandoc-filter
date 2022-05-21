@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.*;
 
 public class EndgameWindow extends JFrame {
-private Map <String, Integer> leaders;
 private Image background;
 
     public EndgameWindow(String player, Integer score) {
@@ -24,6 +23,24 @@ private Image background;
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Container con = this.getContentPane();
+
+        Leaderboard leaderboard = new Leaderboard(player, score);
+        Map<String, Integer> leaders = leaderboard.returnLeaderboard();
+        JTextArea players = new JTextArea();
+        JTextArea scores = new JTextArea();
+        int i = 1;
+        for (Map.Entry<String, Integer> entry : leaders.entrySet()) {
+            players.append(i + ". " + entry.getKey() + "\n");
+            scores.append(entry.getValue().toString() + "\n");
+            i ++;
+        }
+        players.setBounds(20, 150, 650, 360);
+        players.setFont(new Font("Times New Roman", Font.PLAIN, 50));
+        con.add(players);
+        scores.setBounds(690, 150, 80, 360);
+        scores.setFont(new Font("Times New Roman", Font.PLAIN, 50));
+        con.add(scores);
+
         //  начать игру заново
         JButton replay = new JButton("Start again");
         replay.setBounds(20, 520, 360, 40);
@@ -45,8 +62,5 @@ private Image background;
                 System.exit(0);
             }
         });
-
     }
-
-
 }
